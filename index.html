@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>DEKEBOOKS — Livros que revelam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cinzel:wght@400;600;900&family=Lato:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --deep:#060E06;--forest:#0A1A0A;--card:#0D1F0D;
+      --gold:#C8973A;--gold2:#7A5A20;
+      --cream:#F0E8D0;--mist:#B8C8A8;
+      --text:#E8E0CC;--dim:#8A9A80;
+      --border:rgba(200,151,58,.18);
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--deep);color:var(--text);font-family:'Cormorant Garamond',serif;overflow-x:hidden}
+    body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.04}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;
+      justify-content:space-between;padding:1.2rem 4rem;
+      background:linear-gradient(to bottom,rgba(6,14,6,.97) 70%,transparent)}
+    .logo{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:900;color:var(--gold);
+      letter-spacing:.22em;text-decoration:none}
+    .logo span{color:var(--mist);font-weight:400;font-size:.9rem;letter-spacing:.1em}
+    nav ul{list-style:none;display:flex;gap:2.5rem}
+    nav a{font-family:'Lato',sans-serif;font-size:.72rem;font-weight:300;letter-spacing:.18em;
+      text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color .3s}
+    nav a:hover{color:var(--gold)}
+
+    /* HERO */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;text-align:center;padding:7rem 2rem 5rem;position:relative;overflow:hidden;
+      background:radial-gradient(ellipse 80% 70% at 50% 40%,rgba(10,45,10,.95) 0%,transparent 70%),
+        linear-gradient(180deg,#060E06 0%,#0A1A0A 50%,#060E06 100%)}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;
+      background:radial-gradient(circle,rgba(200,151,58,.1) 0%,transparent 70%)}
+    .orb.a{width:700px;height:700px;top:-200px;left:-200px}
+    .orb.b{width:500px;height:500px;bottom:-100px;right:-150px}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+    .hero-tag{font-family:'Lato',sans-serif;font-size:.7rem;letter-spacing:.35em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:1.4rem;
+      opacity:0;animation:fadeUp .8s .1s forwards}
+    .hero h1{font-family:'Cinzel',serif;font-size:clamp(3.5rem,9vw,8rem);font-weight:900;
+      line-height:1;letter-spacing:.04em;color:var(--cream);
+      opacity:0;animation:fadeUp .9s .3s forwards}
+    .hero h1 em{color:var(--gold);font-style:normal}
+    .hero-sub{font-size:clamp(1rem,2vw,1.4rem);font-weight:300;font-style:italic;
+      color:var(--mist);margin-top:1.2rem;max-width:500px;
+      opacity:0;animation:fadeUp .9s .5s forwards}
+    .divider-hero{width:70px;height:1px;background:var(--gold);margin:2.5rem auto;
+      opacity:0;animation:fadeUp .7s .7s forwards}
+    .btn-hero{display:inline-block;font-family:'Lato',sans-serif;font-size:.72rem;
+      letter-spacing:.22em;text-transform:uppercase;padding:.85rem 2.4rem;
+      border:1px solid var(--gold);color:var(--gold);text-decoration:none;
+      position:relative;overflow:hidden;transition:color .3s;
+      opacity:0;animation:fadeUp .7s .9s forwards}
+    .btn-hero::before{content:'';position:absolute;inset:0;background:var(--gold);
+      transform:translateX(-101%);transition:transform .35s}
+    .btn-hero:hover::before{transform:translateX(0)}
+    .btn-hero:hover{color:var(--deep)}
+    .btn-hero span{position:relative;z-index:1}
+
+    /* SECTIONS */
+    .section{padding:6rem 2rem;max-width:1200px;margin:0 auto}
+    .section-head{text-align:center;margin-bottom:4rem}
+    .s-tag{font-family:'Lato',sans-serif;font-size:.67rem;letter-spacing:.3em;
+      text-transform:uppercase;color:var(--gold);display:block;margin-bottom:.7rem}
+    .s-title{font-family:'Cinzel',serif;font-size:clamp(1.8rem,4vw,2.6rem);
+      font-weight:600;color:var(--cream);line-height:1.2}
+    .s-line{width:50px;height:1px;background:var(--gold2);margin:1.2rem auto 0}
+
+    /* BOOKS GRID */
+    .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2.5rem}
+    .book-card{background:var(--card);border:1px solid var(--border);border-radius:2px;
+      overflow:hidden;transition:transform .4s,box-shadow .4s,border-color .4s}
+    .book-card:hover{transform:translateY(-8px);
+      box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 40px rgba(200,151,58,.07);
+      border-color:rgba(200,151,58,.4)}
+    .book-cover{width:100%;aspect-ratio:2/3;overflow:hidden}
+    .book-cover canvas{width:100%;height:100%;display:block}
+    .book-info{padding:1.6rem}
+    .book-genre{font-family:'Lato',sans-serif;font-size:.63rem;letter-spacing:.25em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+    .book-title{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:600;
+      color:var(--cream);line-height:1.3;margin-bottom:.3rem}
+    .book-pages{font-size:.85rem;color:var(--dim);font-style:italic;margin-bottom:.9rem}
+    .book-synopsis{font-size:.95rem;line-height:1.7;color:var(--text);
+      display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;
+      margin-bottom:1.2rem}
+
+    /* STARS */
+    .rating-area{margin-bottom:1.2rem}
+    .stars-display{display:flex;align-items:center;gap:.4rem;margin-bottom:.5rem;flex-wrap:wrap}
+    .star-show{font-size:1.1rem;color:var(--gold2);transition:color .2s}
+    .star-show.on{color:var(--gold)}
+    .rating-count{font-family:'Lato',sans-serif;font-size:.72rem;color:var(--dim)}
+    .rate-label{font-family:'Lato',sans-serif;font-size:.67rem;letter-spacing:.15em;
+      text-transform:uppercase;color:var(--dim);margin-bottom:.4rem;display:block}
+    .stars-input{display:flex;gap:.3rem}
+    .star-btn{font-size:1.3rem;color:var(--gold2);transition:color .2s,transform .15s;
+      cursor:pointer;background:none;border:none;padding:0;line-height:1}
+    .star-btn:hover,.star-btn.hov{color:var(--gold);transform:scale(1.2)}
+    .rated-msg{font-size:.82rem;color:var(--mist);font-style:italic;margin-top:.3rem}
+
+    /* ACTIONS */
+    .book-actions{display:flex;gap:.8rem;flex-wrap:wrap}
+    .btn-dl{display:inline-flex;align-items:center;gap:.5rem;font-family:'Lato',sans-serif;
+      font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;padding:.65rem 1.4rem;
+      background:var(--gold);color:var(--deep);text-decoration:none;cursor:pointer;
+      border:none;transition:background .3s,box-shadow .3s;font-weight:400}
+    .btn-dl:hover{background:#e0a840;box-shadow:0 4px 20px rgba(200,151,58,.4)}
+    .btn-more{display:inline-flex;align-items:center;gap:.5rem;font-family:'Lato',sans-serif;
+      font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;padding:.65rem 1.4rem;
+      background:transparent;border:1px solid var(--border);color:var(--dim);
+      cursor:pointer;transition:border-color .3s,color .3s}
+    .btn-more:hover{border-color:var(--gold);color:var(--gold)}
+
+    /* MODAL */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;
+      display:flex;align-items:center;justify-content:center;padding:2rem;
+      opacity:0;pointer-events:none;transition:opacity .3s}
+    .overlay.open{opacity:1;pointer-events:all}
+    .modal{background:var(--card);border:1px solid var(--border);border-radius:2px;
+      max-width:700px;width:100%;max-height:88vh;overflow-y:auto;
+      transform:translateY(24px);transition:transform .35s;position:relative}
+    .overlay.open .modal{transform:none}
+    .modal-head{width:100%;height:260px;overflow:hidden;flex-shrink:0}
+    .modal-head canvas{width:100%;height:100%;display:block;object-fit:cover}
+    .modal-body{padding:2.4rem}
+    .modal-genre{font-family:'Lato',sans-serif;font-size:.65rem;letter-spacing:.28em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:.6rem}
+    .modal-title{font-family:'Cinzel',serif;font-size:1.9rem;font-weight:600;
+      color:var(--cream);line-height:1.2;margin-bottom:.4rem}
+    .modal-pages{font-size:.9rem;color:var(--dim);font-style:italic;margin-bottom:1.4rem}
+    .modal-hr{width:100%;height:1px;background:var(--border);margin:1.4rem 0}
+    .modal-syn p{font-size:1rem;line-height:1.85;color:var(--text);margin-bottom:1rem}
+    .modal-close{position:absolute;top:1rem;right:1rem;background:rgba(6,14,6,.8);
+      border:1px solid var(--border);color:var(--text);width:36px;height:36px;
+      border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;
+      justify-content:center;transition:all .3s;z-index:10}
+    .modal-close:hover{background:var(--gold);color:var(--deep);border-color:var(--gold)}
+    .modal-actions{display:flex;gap:1rem;margin-top:1.8rem;flex-wrap:wrap}
+    .modal-rating{margin-top:1.5rem}
+
+    /* ABOUT */
+    .about-wrap{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+    .about-text h2{font-family:'Cinzel',serif;font-size:2rem;font-weight:600;
+      color:var(--cream);margin-bottom:1.4rem;line-height:1.3}
+    .about-text p{font-size:1.05rem;line-height:1.85;color:var(--text);margin-bottom:1rem}
+    .about-canvas-wrap{display:flex;justify-content:center}
+    .about-canvas-wrap canvas{border:1px solid var(--border)}
+
+    /* FOOTER */
+    footer{border-top:1px solid var(--border);padding:2.5rem 4rem;
+      display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+    .footer-logo{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:900;
+      color:var(--gold);letter-spacing:.2em}
+    footer p{font-family:'Lato',sans-serif;font-size:.7rem;letter-spacing:.08em;
+      color:var(--dim);text-align:right;line-height:1.7}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:2rem;right:2rem;background:var(--card);
+      border:1px solid var(--gold);color:var(--gold);padding:.8rem 1.6rem;
+      font-family:'Lato',sans-serif;font-size:.78rem;letter-spacing:.1em;
+      z-index:9000;transform:translateY(80px);opacity:0;
+      transition:all .4s;border-radius:2px;pointer-events:none}
+    .toast.show{transform:none;opacity:1}
+
+    @media(max-width:768px){
+      nav{padding:1rem 1.5rem}
+      nav ul{display:none}
+      .section{padding:4rem 1.5rem}
+      .about-wrap{grid-template-columns:1fr}
+      footer{flex-direction:column;padding:2rem 1.5rem;text-align:center}
+      footer p{text-align:center}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#">DEKE<span>BOOKS</span></a>
+  <ul>
+    <li><a href="#livros">Livros</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+  <p class="hero-tag">Bem-vindo à DEKEBOOKS</p>
+  <h1>Livros que<br/><em>revelam</em></h1>
+  <p class="hero-sub">Histórias escritas com honestidade, feitas para quem tem coragem de se ver.</p>
+  <div class="divider-hero"></div>
+  <a href="#livros" class="btn-hero"><span>Ver os livros</span></a>
+</section>
+
+<div id="livros" style="background:linear-gradient(to bottom,var(--deep),var(--forest),var(--deep))">
+  <div class="section">
+    <div class="section-head">
+      <span class="s-tag">Catálogo</span>
+      <h2 class="s-title">Nossos Livros</h2>
+      <div class="s-line"></div>
+    </div>
+    <div class="books-grid" id="booksGrid"></div>
+  </div>
+</div>
+
+<section id="sobre" style="border-top:1px solid var(--border)">
+  <div class="section">
+    <div class="about-wrap">
+      <div class="about-text">
+        <h2>Sobre a DEKEBOOKS</h2>
+        <p>A DEKEBOOKS nasceu da crença de que histórias bem contadas têm o poder de mudar como nos vemos — e como vemos o mundo ao redor.</p>
+        <p>Aqui você encontra livros disponíveis gratuitamente para download, escritos com cuidado e honestidade. Cada obra é uma jornada que começa na primeira página e continua dentro de você muito depois do fim.</p>
+        <p style="color:var(--mist);font-style:italic">Baixe. Leia. Avalie. Compartilhe.</p>
+      </div>
+      <div class="about-canvas-wrap">
+        <canvas id="aboutCanvas" width="320" height="380"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">DEKEBOOKS</div>
+  <p>© 2026 DEKEBOOKS — Todos os direitos reservados<br/>Conteúdo de autoria própria. Proibida reprodução sem autorização.</p>
+</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="closeOnBg(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-head"><canvas id="mCanvas" width="700" height="260"></canvas></div>
+    <div class="modal-body">
+      <div class="modal-genre" id="mGenre"></div>
+      <div class="modal-title" id="mTitle"></div>
+      <div class="modal-pages" id="mPages"></div>
+      <div class="modal-hr"></div>
+      <div class="modal-syn" id="mSyn"></div>
+      <div class="modal-rating" id="mRating"></div>
+      <div class="modal-actions" id="mActions"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── BOOKS DATA ────────────────────────────────────────────────────────────────
+const BOOKS = [
+  {
+    id:'casa',
+    title:'A Casa que Não Esquece os Mortos',
+    genre:'Terror & Suspense',
+    pages:'102 páginas',
+    pdf:'casa.pdf',
+    bg:'#0E0606', accent:'#9B1111', accent2:'#5A0000', textCol:'#F0E8D0',
+    synopsis:`Camila nunca soube que tinha uma tia. Quando herda uma casa numa cidade fantasma chamada Velmoro, vai até lá esperando ficar uma semana — e descobre que a casa não deixa as pessoas irem assim tão facilmente.
+
+Não porque prende. Porque guarda. A casa tem memória: lembra de cada pessoa que viveu entre suas paredes, cada hábito, cada amor, cada raiva acumulada. Ester, que morreu em 1923, ainda cozinha na cozinha todas as manhãs. Marta ainda se olha no espelho do corredor. E Renato — o marido da tia, desaparecido em 1974 — ficou preso no porão com cinquenta anos de raiva de não ter conseguido sair.
+
+O horror aqui não vem de monstros. Vem do reconhecimento: de que certos lugares nos conhecem melhor do que imaginamos, de que a raiva guardada por tempo demais se transforma em outra coisa, e de que às vezes a única saída não é fugir — é entender o que está sendo guardado, e por quê.
+
+Uma história sobre memória, sobre os que ficam, e sobre a coragem específica de escolher permanecer num lugar que assusta — porque o que há dentro dele também importa.`
+  },
+  {
+    id:'espelho',
+    title:'O Espelho do Que Podes Ser',
+    genre:'Ficção Literária',
+    pages:'97 páginas',
+    pdf:'espelho.pdf',
+    bg:'#0D1F0D', accent:'#C8973A', accent2:'#7A5A20', textCol:'#F0E8D0',
+    synopsis:`Kael é um jovem viajante sem sobrenome, sem destino e sem respostas. Quando chega à pequena vila de Cresthal, no reino de Valdenmoor, encontra um lugar cercado por um segredo que os moradores sussurram há gerações: no coração da floresta de Valdris, existe um espelho que não reflete apenas a imagem de quem o olha — ele mostra tudo o que essa pessoa foi, tudo o que fez, e tudo o que ainda pode se tornar.
+
+Movido por uma pergunta que carregava sem saber nomear — quem sou eu, realmente? — Kael entra em Valdris ao amanhecer e chega até a câmara de pedra escondida entre as árvores milenares. O que o espelho lhe revela não é um herói nem um vilão: é um homem inteiro, com suas bondades e suas falhas, seus arrependimentos e suas possibilidades. Uma verdade que dói do jeito certo.
+
+O que vem depois é a história mais difícil — não a da floresta, mas a da vida comum que se segue a uma revelação. Kael parte transformado, atravessa vilas e estações, e encontra pessoas que o formam tanto quanto o espelho o formou: Rea, a menina que insiste que ele deve escrever para o mundo; Elara, a historiadora que estuda os povos que construíram o espelho; Nessa, a editora que lhe ensina que honestidade vale mais do que talento.
+
+Uma história sobre coragem — não a coragem das batalhas, mas a de olhar para si mesmo sem desviar o olhar. Sobre o peso de cada escolha e a leveza que vem quando se para de fugir de quem se é.`
+  }
+];
+
+// ── STORAGE (localStorage, persiste entre sessões) ────────────────────────────
+const SK = 'dekebooks_ratings_v1';
+function loadRatings(){ try{ return JSON.parse(localStorage.getItem(SK)||'{}') }catch{return{}} }
+function saveRatings(d){ try{ localStorage.setItem(SK,JSON.stringify(d)) }catch{} }
+function getBookData(id){ const d=loadRatings(); return d[id]||{total:0,count:0,voted:false} }
+function submitRating(id,stars){
+  const d=loadRatings();
+  if(!d[id]) d[id]={total:0,count:0,voted:false};
+  if(d[id].voted) return false;
+  d[id].total+=stars; d[id].count+=1; d[id].voted=true;
+  saveRatings(d); return d[id];
+}
+
+// ── DRAW COVER ────────────────────────────────────────────────────────────────
+function drawCover(canvas, book, wide){
+  const W=canvas.width, H=canvas.height, ctx=canvas.getContext('2d');
+  ctx.fillStyle=book.bg; ctx.fillRect(0,0,W,H);
+
+  // gradient
+  const g=ctx.createRadialGradient(W/2,H*.45,0,W/2,H*.45,H*.6);
+  g.addColorStop(0,'rgba(20,55,20,.75)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  // borders
+  [[W*.04,2],[W*.065,.5]].forEach(([m,lw])=>{
+    ctx.strokeStyle=book.accent; ctx.lineWidth=lw;
+    ctx.strokeRect(m,m,W-m*2,H-m*2);
+  });
+
+  // mirror
+  const cx=W/2, cy=wide?H*.40:H*.37, R=W*.22;
+  const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.7);
+  glow.addColorStop(0,'rgba(200,151,58,.18)'); glow.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=glow; ctx.beginPath(); ctx.arc(cx,cy,R*1.7,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle=book.accent; ctx.lineWidth=wide?2:1.4;
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+  // rays
+  ctx.lineWidth=.4;
+  for(let a=0;a<360;a+=18){
+    const r=a*Math.PI/180;
+    ctx.beginPath();
+    ctx.moveTo(cx+(R+W*.01)*Math.cos(r),cy+(R+W*.01)*Math.sin(r));
+    ctx.lineTo(cx+(R+W*.05)*Math.cos(r),cy+(R+W*.05)*Math.sin(r));
+    ctx.stroke();
+  }
+  ctx.fillStyle='rgba(6,14,6,.97)';
+  ctx.beginPath(); ctx.arc(cx,cy,R-.5,0,Math.PI*2); ctx.fill();
+
+  // figure
+  const sc=wide?1.5:1, fx=cx, fy=cy+R*.08;
+  function fig(color,ox,scl){
+    ctx.strokeStyle=color; ctx.fillStyle=color;
+    ctx.lineWidth=wide?1.2:.8;
+    ctx.beginPath(); ctx.arc(fx+ox,fy-R*.44,R*.11*scl,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(fx+ox,fy-R*.33*scl); ctx.lineTo(fx+ox,fy+R*.15*scl); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(fx+ox-R*.19*scl,fy-R*.1*scl); ctx.lineTo(fx+ox+R*.19*scl,fy-R*.1*scl); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(fx+ox,fy+R*.15*scl); ctx.lineTo(fx+ox-R*.13*scl,fy+R*.42*scl); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(fx+ox,fy+R*.15*scl); ctx.lineTo(fx+ox+R*.13*scl,fy+R*.42*scl); ctx.stroke();
+  }
+  fig(book.accent2, R*.14, sc*.85);
+  fig(book.accent, 0, sc);
+
+  // title area
+  const ty=wide?H*.72:H*.70;
+  ctx.strokeStyle=book.accent; ctx.lineWidth=.7;
+  ctx.beginPath(); ctx.moveTo(W*.15,ty-14); ctx.lineTo(W*.85,ty-14); ctx.stroke();
+
+  ctx.fillStyle=book.textCol; ctx.textAlign='center';
+  const words=book.title.split(' '), half=Math.ceil(words.length/2);
+  const l1=words.slice(0,half).join(' '), l2=words.slice(half).join(' ');
+  const fs=wide?Math.min(W*.05,20):Math.min(W*.058,15);
+  ctx.font=`600 ${fs}px 'Cinzel',serif`;
+  ctx.fillText(l1,W/2,ty); ctx.fillText(l2,W/2,ty+fs*1.35);
+
+  ctx.strokeStyle=book.accent2; ctx.lineWidth=.4;
+  ctx.beginPath(); ctx.moveTo(W*.3,ty+fs*1.35+10); ctx.lineTo(W*.7,ty+fs*1.35+10); ctx.stroke();
+  ctx.fillStyle=book.accent2;
+  ctx.font=`300 ${wide?10:8}px 'Lato',sans-serif`;
+  ctx.fillText(book.genre.toUpperCase(),W/2,ty+fs*1.35+(wide?26:20));
+}
+
+// ── RATING HTML ───────────────────────────────────────────────────────────────
+function avgStarsHTML(avg,count){
+  let s='';
+  for(let i=1;i<=5;i++) s+=`<span class="star-show ${i<=Math.round(avg)?'on':''}">★</span>`;
+  return `<div class="stars-display">${s}<span class="rating-count">${count>0?(avg.toFixed(1)+' ('+count+(count===1?' avaliação':' avaliações')+')'):'Sem avaliações ainda'}</span></div>`;
+}
+function rateInputHTML(id,suffix){
+  const d=getBookData(id);
+  if(d.voted) return `<p class="rated-msg">✓ Você já avaliou este livro — obrigado!</p>`;
+  return `
+    <span class="rate-label">Dê sua nota:</span>
+    <div class="stars-input" id="si_${id}_${suffix}">
+      ${[1,2,3,4,5].map(i=>`<button class="star-btn" onclick="doRate('${id}','${suffix}',${i})">☆</button>`).join('')}
+    </div>`;
+}
+function fullRatingHTML(id,suffix){
+  const d=getBookData(id);
+  const avg=d.count>0?d.total/d.count:0;
+  return avgStarsHTML(avg,d.count)+rateInputHTML(id,suffix);
+}
+function attachHover(id,suffix){
+  const cont=document.getElementById(`si_${id}_${suffix}`);
+  if(!cont) return;
+  const btns=cont.querySelectorAll('.star-btn');
+  btns.forEach((b,idx)=>{
+    b.addEventListener('mouseenter',()=>btns.forEach((x,j)=>{ x.textContent=j<=idx?'★':'☆'; x.classList.toggle('hov',j<=idx); }));
+    b.addEventListener('mouseleave',()=>btns.forEach(x=>{ x.textContent='☆'; x.classList.remove('hov'); }));
+  });
+}
+function doRate(id,suffix,stars){
+  const res=submitRating(id,stars);
+  if(!res){ showToast('Você já avaliou este livro!'); return; }
+  showToast(`Obrigado! Você avaliou com ${stars} estrela${stars>1?'s':''}! ★`);
+  // update card
+  const cardEl=document.getElementById(`rating_card_${id}`);
+  if(cardEl){ cardEl.innerHTML=fullRatingHTML(id,'card'); attachHover(id,'card'); }
+  // update modal if open
+  const mEl=document.getElementById('mRating');
+  if(mEl && document.getElementById('overlay').classList.contains('open')){
+    mEl.innerHTML=fullRatingHTML(id,'modal'); attachHover(id,'modal');
+  }
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+let currentBookId=null;
+function openModal(id){
+  const book=BOOKS.find(b=>b.id===id);
+  if(!book) return;
+  currentBookId=id;
+  const mc=document.getElementById('mCanvas');
+  mc.width=700; mc.height=260;
+  drawCover(mc,book,true);
+  document.getElementById('mGenre').textContent=book.genre;
+  document.getElementById('mTitle').textContent=book.title;
+  document.getElementById('mPages').textContent=book.pages;
+  document.getElementById('mSyn').innerHTML=book.synopsis.split('\n\n').map(p=>`<p>${p}</p>`).join('');
+  document.getElementById('mRating').innerHTML=fullRatingHTML(id,'modal');
+  document.getElementById('mActions').innerHTML=`<a href="${book.pdf}" download class="btn-dl">⬇ Baixar PDF grátis</a>`;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  attachHover(id,'modal');
+}
+function closeModal(){ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow=''; }
+function closeOnBg(e){ if(e.target===document.getElementById('overlay')) closeModal(); }
+
+// ── ABOUT CANVAS ──────────────────────────────────────────────────────────────
+function drawAbout(){
+  const c=document.getElementById('aboutCanvas');
+  if(!c) return;
+  const W=c.width, H=c.height, ctx=c.getContext('2d');
+  ctx.fillStyle='#0D1F0D'; ctx.fillRect(0,0,W,H);
+  // borders
+  [[12,1.5],[20,.4]].forEach(([m,lw])=>{ ctx.strokeStyle='#C8973A'; ctx.lineWidth=lw; ctx.strokeRect(m,m,W-m*2,H-m*2); });
+  // lines
+  ctx.strokeStyle='rgba(200,151,58,.12)'; ctx.lineWidth=.3;
+  for(let y=50;y<H-50;y+=24){ ctx.beginPath(); ctx.moveTo(35,y); ctx.lineTo(W-35,y); ctx.stroke(); }
+  // big D watermark
+  ctx.font=`900 ${W*.58}px 'Cinzel',serif`; ctx.fillStyle='rgba(200,151,58,.06)'; ctx.textAlign='center';
+  ctx.fillText('D',W/2,H*.72);
+  // brand
+  ctx.fillStyle='#C8973A'; ctx.font=`600 ${W*.088}px 'Cinzel',serif`; ctx.fillText('DEKEBOOKS',W/2,H*.5);
+  ctx.fillStyle='rgba(184,200,168,.55)'; ctx.font=`300 italic ${W*.048}px 'Cormorant Garamond',serif`;
+  ctx.fillText('Livros que revelam',W/2,H*.5+W*.1);
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let toastT;
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderBooks(){
+  const grid=document.getElementById('booksGrid');
+  BOOKS.forEach(book=>{
+    const div=document.createElement('div'); div.className='book-card';
+    div.innerHTML=`
+      <div class="book-cover"><canvas id="cov_${book.id}"></canvas></div>
+      <div class="book-info">
+        <div class="book-genre">${book.genre}</div>
+        <div class="book-title">${book.title}</div>
+        <div class="book-pages">${book.pages}</div>
+        <div class="book-synopsis">${book.synopsis.split('\n\n')[0]}</div>
+        <div class="rating-area" id="rating_card_${book.id}">${fullRatingHTML(book.id,'card')}</div>
+        <div class="book-actions">
+          <a href="${book.pdf}" download class="btn-dl">⬇ Baixar PDF</a>
+          <button class="btn-more" onclick="openModal('${book.id}')">Sinopse completa</button>
+        </div>
+      </div>`;
+    grid.appendChild(div);
+    const cv=document.getElementById(`cov_${book.id}`);
+    cv.width=600; cv.height=900;
+    drawCover(cv,book,false);
+    attachHover(book.id,'card');
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{ renderBooks(); drawAbout(); });
+</script>
+</body>
+</html>
